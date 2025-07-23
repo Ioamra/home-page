@@ -1,0 +1,28 @@
+<app-base-modal [isOpen]="isOpen" title="Connexion" (closeModal)="onClose()">
+  <form (ngSubmit)="onSubmit()" class="login-form">
+    <app-text-input label="Email" type="email" id="email" name="email" [(ngModel)]="loginData.email" [required]="true" placeholder="votre@email.com">
+    </app-text-input>
+
+    <app-text-input
+      label="Mot de passe"
+      type="password"
+      id="password"
+      name="password"
+      [(ngModel)]="loginData.password"
+      [required]="true"
+      placeholder="Votre mot de passe"
+    >
+    </app-text-input>
+
+    <div class="login-form__actions">
+      <button type="submit" class="login-form__btn login-form__btn--primary" [disabled]="!loginData.email || !loginData.password">
+        Se connecter
+      </button>
+      <button type="button" class="login-form__btn login-form__btn--secondary" (click)="onClose()">Annuler</button>
+    </div>
+
+    <div class="login-form__links">
+      <a href="#" class="login-form__link">Mot de passe oublié ?</a>
+    </div>
+  </form>
+</app-base-modal>

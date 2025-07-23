@@ -1,0 +1,15 @@
+<section class="text-input">
+  <label [for]="id" class="text-input__label">{{ label }}</label>
+  <input
+    [type]="type"
+    [id]="id"
+    [name]="name"
+    [value]="value"
+    [required]="required"
+    [disabled]="disabled"
+    [placeholder]="placeholder"
+    class="text-input__input"
+    (input)="onInput($event)"
+    (blur)="onBlur()"
+  />
+</section>

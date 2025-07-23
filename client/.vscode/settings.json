@@ -1,0 +1,12 @@
+{
+  "editor.codeActionsOnSave": {
+    "source.organizeImports": "always",
+    "source.fixAll.eslint": "always"
+  },
+  "editor.formatOnSave": true,
+  "editor.tabSize": 2,
+  "eslint.validate": ["javascript", "typescript", "html"],
+  "eslint.options": {
+    "extensions": [".js", ".ts", ".html"]
+  }
+}

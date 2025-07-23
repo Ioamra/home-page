@@ -1,0 +1,9 @@
+<main [style.background-image]="'url(' + homeStore.backgroundImageUrl() + ')'">
+  <div class="home-content">
+    <div class="header-actions">
+      <button class="login-btn" (click)="openLoginModal()">Se connecter</button>
+    </div>
+  </div>
+
+  <app-login-modal [isOpen]="isLoginModalOpen" (closeModal)="closeLoginModal()" />
+</main>
