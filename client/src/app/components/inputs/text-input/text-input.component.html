@@ -8,8 +8,13 @@
     [required]="required"
     [disabled]="disabled"
     [placeholder]="placeholder"
-    class="text-input__input"
+    [class]="'text-input__input' + (isInvalid ? ' text-input__input--error' : '')"
     (input)="onInput($event)"
     (blur)="onBlur()"
   />
+  @if (isInvalid) {
+    <div class="text-input__error">
+      {{ errorMessage }}
+    </div>
+  }
 </section>

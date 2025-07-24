@@ -1,22 +1,14 @@
-import { Component, Input, forwardRef } from '@angular/core';
-import { ControlValueAccessor, FormsModule, NG_VALUE_ACCESSOR } from '@angular/forms';
+import { Component, Input, inject } from '@angular/core';
+import { ControlValueAccessor, NgControl } from '@angular/forms';
 
 @Component({
   selector: 'app-text-input',
-  imports: [FormsModule],
   templateUrl: './text-input.component.html',
   styleUrl: './text-input.component.scss',
-  providers: [
-    {
-      provide: NG_VALUE_ACCESSOR,
-      useExisting: forwardRef((): typeof TextInputComponent => TextInputComponent),
-      multi: true,
-    },
-  ],
 })
 export class TextInputComponent implements ControlValueAccessor {
   @Input() label = '';
-  @Input() type = 'text';
+  @Input() type: 'text' | 'email' | 'password' = 'text';
   @Input() placeholder = '';
   @Input() required = false;
   @Input() id = '';
@@ -25,8 +17,35 @@ export class TextInputComponent implements ControlValueAccessor {
   value = '';
   disabled = false;
 
-  private onChange!: (value: string) => void;
-  private onTouched!: () => void;
+  private onChange: (value: string) => void = () => {
+    /* noop */
+  };
+  private onTouched: () => void = () => {
+    /* noop */
+  };
+  private readonly ngControl = inject(NgControl, { optional: true });
+
+  constructor() {
+    if (this.ngControl) this.ngControl.valueAccessor = this;
+  }
+
+  get isInvalid(): boolean {
+    return !!(this.ngControl?.control?.invalid && this.ngControl?.control?.touched);
+  }
+
+  get errorMessage(): string {
+    const errors = this.ngControl?.control?.errors;
+    if (!errors) return '';
+
+    const [key, value] = Object.entries(errors)[0];
+    const messages: Record<string, string> = {
+      required: `${this.label} est requis`,
+      email: "Format d'email invalide",
+      minlength: `${this.label} doit contenir au moins ${value.requiredLength} caractères`,
+      maxlength: `${this.label} ne peut pas dépasser ${value.requiredLength} caractères`,
+    };
+    return messages[key] || 'Champ invalide';
+  }
 
   writeValue(value: string): void {
     this.value = value || '';
@@ -40,13 +59,12 @@ export class TextInputComponent implements ControlValueAccessor {
     this.onTouched = fn;
   }
 
-  setDisabledState(isDisabled: boolean): void {
-    this.disabled = isDisabled;
+  setDisabledState(disabled: boolean): void {
+    this.disabled = disabled;
   }
 
   onInput(event: Event): void {
-    const target = event.target as HTMLInputElement;
-    this.value = target.value;
+    this.value = (event.target as HTMLInputElement).value;
     this.onChange(this.value);
   }
 

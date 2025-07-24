@@ -34,5 +34,21 @@
       color: #6b7280;
       cursor: not-allowed;
     }
+
+    &--error {
+      border-color: #ef4444;
+
+      &:focus {
+        border-color: #ef4444;
+        box-shadow: 0 0 0 3px rgba(239, 68, 68, 0.1);
+      }
+    }
+  }
+
+  &__error {
+    margin-top: 0.25rem;
+    font-size: 0.875rem;
+    color: #ef4444;
+    font-weight: 400;
   }
 }
