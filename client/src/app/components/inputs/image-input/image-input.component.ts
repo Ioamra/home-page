@@ -4,8 +4,6 @@ import { Component } from '@angular/core';
   selector: 'app-image-input',
   imports: [],
   templateUrl: './image-input.component.html',
-  styleUrl: './image-input.component.scss'
+  styleUrl: './image-input.component.scss',
 })
-export class ImageInputComponent {
-
-}
+export class ImageInputComponent {}

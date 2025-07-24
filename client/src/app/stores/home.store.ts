@@ -15,7 +15,7 @@ export const HomeStore = signalStore(
   { providedIn: 'root' },
   withState(initialState),
   withMethods(store => ({
-    getMyConfig: () => {
+    getMyConfig: (): void => {
       patchState(store, { isLoading: true });
     },
   })),

@@ -16,18 +16,18 @@ export class LoginModalComponent {
   @Input() isOpen = false;
   @Output() closeModal = new EventEmitter<void>();
 
-  private authStore = inject(AuthStore);
+  private readonly authStore = inject(AuthStore);
 
   loginData = {
     email: '',
     password: '',
   };
 
-  onClose() {
+  onClose(): void {
     this.closeModal.emit();
   }
 
-  onSubmit() {
+  onSubmit(): void {
     if (this.loginData.email && this.loginData.password) {
       // Ici vous pouvez appeler votre service d'authentification
       console.log('Login attempt:', this.loginData);

@@ -14,7 +14,7 @@ export const AuthStore = signalStore(
   { providedIn: 'root' },
   withState(initialState),
   withMethods(store => ({
-    login: (username: string, password: string) => {
+    login: (username: string, password: string): void => {
       patchState(store, { isLoading: true });
       console.log(username, password);
     },

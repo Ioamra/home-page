@@ -14,7 +14,7 @@ export class BaseModalComponent implements OnChanges {
   @Output() closeModal = new EventEmitter<void>();
   @ViewChild('dialog', { static: false }) dialog!: ElementRef<HTMLDialogElement>;
 
-  ngOnChanges(changes: SimpleChanges) {
+  ngOnChanges(changes: SimpleChanges): void {
     if (changes['isOpen'] && this.dialog) {
       if (this.isOpen) {
         this.dialog.nativeElement.showModal();
@@ -24,11 +24,11 @@ export class BaseModalComponent implements OnChanges {
     }
   }
 
-  onClose() {
+  onClose(): void {
     this.closeModal.emit();
   }
 
-  onBackdropClick(event: MouseEvent) {
+  onBackdropClick(event: MouseEvent): void {
     if (event.target === this.dialog.nativeElement) {
       this.onClose();
     }

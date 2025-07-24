@@ -8,9 +8,8 @@ describe('ImageInputComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [ImageInputComponent]
-    })
-    .compileComponents();
+      imports: [ImageInputComponent],
+    }).compileComponents();
 
     fixture = TestBed.createComponent(ImageInputComponent);
     component = fixture.componentInstance;

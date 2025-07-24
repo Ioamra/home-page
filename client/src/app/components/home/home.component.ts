@@ -16,11 +16,11 @@ export class HomeComponent {
 
   isLoginModalOpen = false;
 
-  openLoginModal() {
+  openLoginModal(): void {
     this.isLoginModalOpen = true;
   }
 
-  closeLoginModal() {
+  closeLoginModal(): void {
     this.isLoginModalOpen = false;
   }
 }
