@@ -10,16 +10,24 @@ export class AuthService {
   private readonly http: HttpClient = inject(HttpClient);
 
   login(username: string, password: string): Observable<HttpResponse<unknown>> {
-    return this.http.post<unknown>(`${environment.apiUrl}/auth/login`, {
-      username,
-      password,
-    });
+    return this.http.post<unknown>(
+      `${environment.apiUrl}/auth/login`,
+      {
+        username,
+        password,
+      },
+      { observe: 'response' },
+    );
   }
 
   register(username: string, password: string): Observable<HttpResponse<unknown>> {
-    return this.http.post<unknown>(`${environment.apiUrl}/auth/register`, {
-      username,
-      password,
-    });
+    return this.http.post<unknown>(
+      `${environment.apiUrl}/auth/register`,
+      {
+        username,
+        password,
+      },
+      { observe: 'response' },
+    );
   }
 }
