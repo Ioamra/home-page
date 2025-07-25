@@ -1,11 +1,11 @@
-<dialog #dialog class="modal" (click)="onBackdropClick($event)" (keydown.escape)="onClose()" tabindex="0">
-  <section class="modal__header">
-    <h2 class="modal__title">{{ title }}</h2>
-    <button class="modal__close-btn" (click)="onClose()">
+<dialog #dialog (click)="onBackdropClick($event)" (keydown.escape)="onClose()" tabindex="0">
+  <header>
+    <h2>{{ title }}</h2>
+    <button (click)="onClose()">
       <span>&times;</span>
     </button>
-  </section>
-  <section class="modal__content">
+  </header>
+  <main>
     <ng-content />
-  </section>
+  </main>
 </dialog>

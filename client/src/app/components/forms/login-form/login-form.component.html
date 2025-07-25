@@ -1,0 +1,33 @@
+<form [formGroup]="loginForm" (ngSubmit)="onSubmit()" class="login-form">
+  <app-text-input
+    label="Email"
+    type="email"
+    id="login-email"
+    name="email"
+    formControlName="email"
+    [required]="true"
+    placeholder="votre@email.com"
+  >
+  </app-text-input>
+
+  <app-text-input
+    label="Mot de passe"
+    type="password"
+    id="login-password"
+    name="password"
+    formControlName="password"
+    [required]="true"
+    placeholder="Votre mot de passe"
+  >
+  </app-text-input>
+
+  <button type="submit" class="btn btn--primary" [disabled]="loginForm.invalid">
+    Se connecter
+  </button>
+
+  <div class="login-form__links">
+    <button type="button" class="login-form__link" (click)="onForgotPassword()">
+      Mot de passe oublié ?
+    </button>
+  </div>
+</form>

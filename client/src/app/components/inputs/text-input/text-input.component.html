@@ -9,7 +9,11 @@
       [required]="required"
       [disabled]="disabled"
       [placeholder]="placeholder"
-      [class]="'text-input__input' + (isInvalid ? ' text-input__input--error' : '') + (isPasswordType ? ' text-input__input--password' : '')"
+      [class]="
+        'text-input__input' +
+        (isInvalid ? ' text-input__input--error' : '') +
+        (isPasswordType ? ' text-input__input--password' : '')
+      "
       (input)="onInput($event)"
       (blur)="onBlur()"
     />

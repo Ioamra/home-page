@@ -1,0 +1,40 @@
+<form [formGroup]="registerForm" (ngSubmit)="onSubmit()" class="register-form">
+  <div class="register-form__content">
+    <app-text-input
+      label="Email"
+      type="email"
+      placeholder="Entrez votre email"
+      formControlName="email"
+      [required]="true"
+    >
+    </app-text-input>
+
+    <app-text-input
+      label="Mot de passe"
+      type="password"
+      placeholder="Entrez votre mot de passe"
+      formControlName="password"
+      [required]="true"
+    >
+    </app-text-input>
+
+    <app-text-input
+      label="Confirmer le mot de passe"
+      type="password"
+      placeholder="Confirmez votre mot de passe"
+      formControlName="confirmPassword"
+      [required]="true"
+    >
+    </app-text-input>
+
+    @if (registerForm.hasError('passwordMismatch') && confirmPassword?.touched) {
+      <div class="register-form__error">Les mots de passe ne correspondent pas</div>
+    }
+  </div>
+
+  <div class="register-form__actions">
+    <button type="submit" class="register-form__submit-btn" [disabled]="registerForm.invalid">
+      S'inscrire
+    </button>
+  </div>
+</form>

@@ -1,6 +1,6 @@
 @use '../../../../assets/styles/mixins' as *;
 
-.modal {
+dialog {
   margin: auto;
   background: white;
   border: none;
@@ -17,14 +17,14 @@
     backdrop-filter: blur(15px);
   }
 
-  &__header {
+  header {
     position: relative;
     @include Flex(center, center);
     padding: 1rem;
     border-bottom: 1px solid #e5e7eb;
   }
 
-  &__title {
+  h2 {
     margin: 0;
     font-size: 1.25rem;
     font-weight: 600;
@@ -32,7 +32,7 @@
     text-align: center;
   }
 
-  &__close-btn {
+  button {
     position: absolute;
     top: 0.5em;
     right: 0.5em;
@@ -52,7 +52,7 @@
     }
   }
 
-  &__content {
+  main {
     padding: 1rem;
   }
 }

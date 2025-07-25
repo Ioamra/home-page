@@ -1,0 +1,82 @@
+dialog {
+  margin: auto;
+  background: white;
+  border: none;
+  border-radius: 8px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  width: 90%;
+  max-width: 500px;
+  max-height: 90dvh;
+  overflow-y: auto;
+  padding: 0;
+
+  &::backdrop {
+    background-color: rgba(0, 0, 0, 0.5);
+    backdrop-filter: blur(15px);
+  }
+
+  header {
+    position: relative;
+    border-bottom: 1px solid #e5e7eb;
+
+    nav {
+      display: flex;
+      background: #f9fafb;
+      border-radius: 12px 12px 0 0;
+      overflow: hidden;
+
+      button {
+        flex: 1;
+        padding: 1rem 1.5rem;
+        background: transparent;
+        border: none;
+        cursor: pointer;
+        font-size: 1rem;
+        font-weight: 500;
+        color: #6b7280;
+        transition: all 0.2s;
+        position: relative;
+
+        &:hover {
+          background: #f3f4f6;
+          color: #374151;
+        }
+
+        &.active {
+          background: #fff;
+          color: #3b82f6;
+          font-weight: 600;
+
+          &::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            height: 2px;
+            background: #3b82f6;
+          }
+        }
+      }
+    }
+  }
+
+  main {
+    padding: 2rem;
+    min-height: 300px;
+    display: flex;
+    flex-direction: column;
+    animation: fadeIn 0.3s ease-in-out;
+  }
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}

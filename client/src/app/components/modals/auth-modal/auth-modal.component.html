@@ -1,0 +1,49 @@
+<dialog
+  #dialog
+  (click)="onBackdropClick($event)"
+  (keydown.escape)="onClose()"
+  [attr.aria-label]="activeTab === 'login' ? 'Connexion' : 'Inscription'"
+  tabindex="0"
+>
+  <header>
+    <nav role="tablist">
+      <button
+        type="button"
+        [class.active]="activeTab === 'login'"
+        (click)="setActiveTab('login')"
+        role="tab"
+        id="login-tab"
+        [attr.aria-selected]="activeTab === 'login'"
+        aria-controls="login-panel"
+      >
+        Connexion
+      </button>
+      <button
+        type="button"
+        [class.active]="activeTab === 'register'"
+        (click)="setActiveTab('register')"
+        role="tab"
+        id="register-tab"
+        [attr.aria-selected]="activeTab === 'register'"
+        aria-controls="register-panel"
+      >
+        Inscription
+      </button>
+    </nav>
+  </header>
+  <main>
+    @if (activeTab === 'login') {
+      <section role="tabpanel" id="login-panel" aria-labelledby="login-tab">
+        <app-login-form
+          (loginSuccess)="onLoginSuccess($event)"
+          (forgotPassword)="onForgotPassword()"
+        >
+        </app-login-form>
+      </section>
+    } @else {
+      <section role="tabpanel" id="register-panel" aria-labelledby="register-tab">
+        <app-register-form (registerSuccess)="onRegisterSuccess($event)"> </app-register-form>
+      </section>
+    }
+  </main>
+</dialog>

@@ -5,5 +5,9 @@
     </div>
   </div>
 
-  <app-login-modal [isOpen]="isLoginModalOpen" (closeModal)="closeLoginModal()" />
+  <app-auth-modal
+    [isOpen]="isAuthModalOpen"
+    [initialTab]="authModalTab"
+    (closeModal)="closeAuthModal()"
+  />
 </main>
