@@ -1,31 +1,29 @@
-.login-form {
-  display: flex;
-  flex-direction: column;
-  gap: 1.5rem;
+@use '../../../../assets/styles/mixins' as *;
 
-  &__links {
-    text-align: center;
-    margin-top: 0.5rem;
-  }
+form {
+  @include Flex(center, center, column);
+  gap: 1em;
 
-  &__link {
-    background: none;
-    border: none;
-    color: #3b82f6;
-    font-size: 0.875rem;
-    font-weight: 500;
-    cursor: pointer;
-    padding: 0;
-
-    &:hover {
-      text-decoration: underline;
-    }
-  }
-
+  app-text-input,
   .btn {
     width: 100%;
-    padding: 0.875rem;
-    font-size: 1rem;
-    margin-top: 0.5rem;
+  }
+
+  .links {
+    text-align: center;
+
+    .link {
+      background: none;
+      border: none;
+      color: #3b82f6;
+      font-size: 0.875rem;
+      font-weight: 500;
+      cursor: pointer;
+      padding: 0;
+
+      &:hover {
+        text-decoration: underline;
+      }
+    }
   }
 }

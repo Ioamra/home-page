@@ -33,17 +33,20 @@
   </header>
   <main>
     @if (activeTab === 'login') {
-      <section role="tabpanel" id="login-panel" aria-labelledby="login-tab">
-        <app-login-form
-          (loginSuccess)="onLoginSuccess($event)"
-          (forgotPassword)="onForgotPassword()"
-        >
-        </app-login-form>
-      </section>
+      <app-login-form
+        id="login-panel"
+        role="tabpanel"
+        aria-labelledby="login-tab"
+        (loginSuccess)="onLoginSuccess($event)"
+        (forgotPassword)="onForgotPassword()"
+      />
     } @else {
-      <section role="tabpanel" id="register-panel" aria-labelledby="register-tab">
-        <app-register-form (registerSuccess)="onRegisterSuccess($event)"> </app-register-form>
-      </section>
+      <app-register-form
+        id="register-panel"
+        role="tabpanel"
+        aria-labelledby="register-tab"
+        (registerSuccess)="onRegisterSuccess($event)"
+      />
     }
   </main>
 </dialog>
