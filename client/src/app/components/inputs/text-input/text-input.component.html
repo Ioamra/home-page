@@ -1,17 +1,29 @@
 <section class="text-input">
   <label [for]="id" class="text-input__label">{{ label }}</label>
-  <input
-    [type]="type"
-    [id]="id"
-    [name]="name"
-    [value]="value"
-    [required]="required"
-    [disabled]="disabled"
-    [placeholder]="placeholder"
-    [class]="'text-input__input' + (isInvalid ? ' text-input__input--error' : '')"
-    (input)="onInput($event)"
-    (blur)="onBlur()"
-  />
+  <div class="text-input__wrapper">
+    <input
+      [type]="inputType"
+      [id]="id"
+      [name]="name"
+      [value]="value"
+      [required]="required"
+      [disabled]="disabled"
+      [placeholder]="placeholder"
+      [class]="'text-input__input' + (isInvalid ? ' text-input__input--error' : '') + (isPasswordType ? ' text-input__input--password' : '')"
+      (input)="onInput($event)"
+      (blur)="onBlur()"
+    />
+    @if (isPasswordType) {
+      <button
+        type="button"
+        class="text-input__toggle-password"
+        (click)="togglePasswordVisibility()"
+        [attr.aria-label]="showPassword ? 'Masquer le mot de passe' : 'Afficher le mot de passe'"
+      >
+        <fa-icon [icon]="showPassword ? faEyeSlash : faEye" class="text-input__icon"></fa-icon>
+      </button>
+    }
+  </div>
   @if (isInvalid) {
     <div class="text-input__error">
       {{ errorMessage }}

@@ -1,8 +1,11 @@
 import { Component, Input, inject } from '@angular/core';
 import { ControlValueAccessor, NgControl } from '@angular/forms';
+import { FaIconComponent } from '@fortawesome/angular-fontawesome';
+import { faEye, faEyeSlash } from '@fortawesome/free-solid-svg-icons';
 
 @Component({
   selector: 'app-text-input',
+  imports: [FaIconComponent],
   templateUrl: './text-input.component.html',
   styleUrl: './text-input.component.scss',
 })
@@ -16,6 +19,11 @@ export class TextInputComponent implements ControlValueAccessor {
 
   value = '';
   disabled = false;
+  showPassword = false;
+
+  // FontAwesome icons
+  faEye = faEye;
+  faEyeSlash = faEyeSlash;
 
   private onChange: (value: string) => void = () => {
     /* noop */
@@ -31,6 +39,18 @@ export class TextInputComponent implements ControlValueAccessor {
 
   get isInvalid(): boolean {
     return !!(this.ngControl?.control?.invalid && this.ngControl?.control?.touched);
+  }
+
+  get isPasswordType(): boolean {
+    return this.type === 'password';
+  }
+
+  get inputType(): string {
+    return this.isPasswordType && this.showPassword ? 'text' : this.type;
+  }
+
+  togglePasswordVisibility(): void {
+    this.showPassword = !this.showPassword;
   }
 
   get errorMessage(): string {
