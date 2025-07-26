@@ -2,30 +2,29 @@ import { HttpClient, HttpResponse } from '@angular/common/http';
 import { inject, Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 import { environment } from '../../environments/environment';
+import { AuthResponse, LoginRequest, RegisterRequest } from '../models/auth.model';
 
 @Injectable({
   providedIn: 'root',
 })
-export class AuthService {
+export class AuthApiService {
   private readonly http: HttpClient = inject(HttpClient);
 
-  login(username: string, password: string): Observable<HttpResponse<unknown>> {
-    return this.http.post<unknown>(
+  login(dto: LoginRequest): Observable<HttpResponse<AuthResponse>> {
+    return this.http.post<AuthResponse>(
       `${environment.apiUrl}/auth/login`,
       {
-        username,
-        password,
+        ...dto,
       },
       { observe: 'response' },
     );
   }
 
-  register(username: string, password: string): Observable<HttpResponse<unknown>> {
-    return this.http.post<unknown>(
+  register(dto: RegisterRequest): Observable<HttpResponse<AuthResponse>> {
+    return this.http.post<AuthResponse>(
       `${environment.apiUrl}/auth/register`,
       {
-        username,
-        password,
+        ...dto,
       },
       { observe: 'response' },
     );
