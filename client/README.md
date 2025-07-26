@@ -1,27 +1,51 @@
 # Client
 
-This project was generated with [Angular CLI](https://github.com/angular/angular-cli) version 18.2.5.
+Ce projet a été généré avec [Angular CLI](https://github.com/angular/angular-cli).
 
-## Development server
+## Démarrage
 
-Run `ng serve` for a dev server. Navigate to `http://localhost:4200/`. The application will automatically reload if you change any of the source files.
+Installe les dépendances si ce n'est pas déjà fait :
 
-## Code scaffolding
+```bash
+npm install
+```
 
-Run `ng generate component component-name` to generate a new component. You can also use `ng generate directive|pipe|service|class|guard|interface|enum|module`.
+Lance le serveur de développement :
 
-## Build
+```bash
+npm start
+```
 
-Run `ng build` to build the project. The build artifacts will be stored in the `dist/` directory.
+Accède à [http://localhost:4200](http://localhost:4200). L'application se recharge automatiquement lors des modifications.
 
-## Running unit tests
+## Construction
 
-Run `ng test` to execute the unit tests via [Karma](https://karma-runner.github.io).
+Pour construire le projet (production ou test) :
 
-## Running end-to-end tests
+```bash
+npm run build
+```
 
-Run `ng e2e` to execute the end-to-end tests via a platform of your choice. To use this command, you need to first add a package that implements end-to-end testing capabilities.
+Les fichiers générés seront dans le dossier `dist/`.
 
-## Further help
+## Tests unitaires
 
-To get more help on the Angular CLI use `ng help` or go check out the [Angular CLI Overview and Command Reference](https://angular.dev/tools/cli) page.
+Lance les tests unitaires avec :
+
+```bash
+npm test
+```
+
+## Génération de composants
+
+Utilise la CLI Angular :
+
+```bash
+ng generate component nom-du-composant
+```
+
+Tu peux aussi générer des directives, pipes, services, etc.
+
+## Aide
+
+Pour plus d'infos sur Angular CLI, utilise `ng help` ou consulte la [documentation officielle](https://angular.dev/tools/cli).
