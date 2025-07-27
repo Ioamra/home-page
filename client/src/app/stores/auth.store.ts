@@ -1,58 +1,86 @@
 import { HttpResponse } from '@angular/common/http';
 import { inject } from '@angular/core';
 import { patchState, signalStore, withMethods, withState } from '@ngrx/signals';
+import { catchError, finalize, Observable, tap } from 'rxjs';
 import { AuthResponse, LoginRequest, RegisterRequest } from '../models/auth.model';
 import { AuthApiService } from '../services/auth.api.service';
 
 interface AuthState {
   isConnected: boolean;
   isLoading: boolean;
+  error: string | null;
 }
 
 const initialState: AuthState = {
   isConnected: false,
   isLoading: false,
+  error: null,
 };
 
 export const AuthStore = signalStore(
   { providedIn: 'root' },
   withState(initialState),
   withMethods((store, authApiService = inject(AuthApiService)) => ({
-    login: (dto: LoginRequest): void => {
-      patchState(store, { isLoading: true });
-      authApiService.login(dto).subscribe({
-        next: (response: HttpResponse<AuthResponse>) => {
+    login: (dto: LoginRequest): Observable<HttpResponse<AuthResponse>> => {
+      patchState(store, { isLoading: true, error: null });
+      return authApiService.login(dto).pipe(
+        tap(response => {
           if (response.status === 200) {
-            patchState(store, { isConnected: true, isLoading: false });
+            patchState(store, {
+              isConnected: true,
+              isLoading: false,
+              error: null,
+            });
           } else {
-            console.warn('Erreur lors de la connexion', response);
+            throw new Error('Erreur lors de la connexion');
+          }
+        }),
+        catchError(() => {
+          throw new Error('Erreur lors de la connexion');
+        }),
+        finalize(() => {
+          patchState(store, { isLoading: false });
+        }),
+      );
+    },
+
+    register: (dto: RegisterRequest): void => {
+      patchState(store, { isLoading: true, error: null });
+      authApiService.register(dto).subscribe({
+        next: response => {
+          if (response.status === 201) {
+            patchState(store, {
+              isLoading: false,
+              error: null,
+              isConnected: true,
+            });
+          } else {
+            throw new Error("Erreur lors de l'inscription");
           }
         },
-        error: (error: Error) => {
-          console.error('Erreur lors de la récupération des clients', error);
+        error: () => {
+          throw new Error("Erreur lors de l'inscription");
         },
         complete: () => {
           patchState(store, { isLoading: false });
         },
       });
     },
-    register: (dto: RegisterRequest): void => {
-      patchState(store, { isLoading: true });
-      authApiService.register(dto).subscribe({
-        next: (response: HttpResponse<AuthResponse>) => {
-          if (response.status === 200) {
-            patchState(store, { isConnected: true, isLoading: false });
-          } else {
-            console.warn('Erreur lors de la connexion', response);
-          }
-        },
-        error: (error: Error) => {
-          console.error('Erreur lors de la récupération des clients', error);
-        },
-        complete: () => {
-          patchState(store, { isLoading: false });
-        },
+
+    setIsConnected: (isConnected: boolean): void => {
+      patchState(store, { isConnected });
+    },
+
+    logout: (): void => {
+      patchState(store, {
+        isConnected: false,
+        isLoading: false,
+        error: null,
       });
+    },
+
+    clearError: (): void => {
+      patchState(store, { error: null });
     },
   })),
 );

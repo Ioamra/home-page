@@ -23,6 +23,7 @@
         class="text-input__toggle-password"
         (click)="togglePasswordVisibility()"
         [attr.aria-label]="showPassword ? 'Masquer le mot de passe' : 'Afficher le mot de passe'"
+        tabindex="-1"
       >
         <fa-icon [icon]="showPassword ? faEyeSlash : faEye" class="text-input__icon"></fa-icon>
       </button>

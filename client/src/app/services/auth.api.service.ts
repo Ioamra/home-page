@@ -16,17 +16,30 @@ export class AuthApiService {
       {
         ...dto,
       },
-      { observe: 'response' },
+      { observe: 'response', withCredentials: true },
     );
   }
 
   register(dto: RegisterRequest): Observable<HttpResponse<AuthResponse>> {
-    return this.http.post<AuthResponse>(
-      `${environment.apiUrl}/auth/register`,
-      {
-        ...dto,
-      },
-      { observe: 'response' },
-    );
+    const formData = new FormData();
+    const entries = Object.entries(dto) as [
+      keyof RegisterRequest,
+      RegisterRequest[keyof RegisterRequest],
+    ][];
+    entries.forEach(([key, value]) => {
+      if (key === 'photo') {
+        formData.append(
+          'photo',
+          value instanceof Blob ? value : new Blob([], { type: 'application/octet-stream' }),
+          '',
+        );
+      } else {
+        formData.append(key as string, value as string);
+      }
+    });
+    return this.http.post<AuthResponse>(`${environment.apiUrl}/auth/register`, formData, {
+      observe: 'response',
+      withCredentials: true,
+    });
   }
 }

@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component, EventEmitter, Output, inject } from '@angular/core';
+import { Component, EventEmitter, inject, Input, OnChanges, Output } from '@angular/core';
 import {
   AbstractControl,
   FormBuilder,
@@ -22,7 +22,8 @@ export interface RegisterData {
   templateUrl: './register-form.component.html',
   styleUrl: './register-form.component.scss',
 })
-export class RegisterFormComponent {
+export class RegisterFormComponent implements OnChanges {
+  @Input() disabled = false;
   @Output() registerSuccess = new EventEmitter<RegisterData>();
 
   private readonly fb = inject(FormBuilder);
@@ -40,6 +41,14 @@ export class RegisterFormComponent {
     );
   }
 
+  ngOnChanges(): void {
+    if (this.disabled) {
+      this.registerForm.disable();
+    } else {
+      this.registerForm.enable();
+    }
+  }
+
   passwordMatchValidator(form: AbstractControl): Record<string, boolean> | null {
     const password = form.get('password');
     const confirmPassword = form.get('confirmPassword');
@@ -51,7 +60,7 @@ export class RegisterFormComponent {
   }
 
   onSubmit(): void {
-    if (this.registerForm.valid) {
+    if (this.registerForm.valid && !this.disabled) {
       const registerData: RegisterData = this.registerForm.value;
       this.registerSuccess.emit(registerData);
     } else {

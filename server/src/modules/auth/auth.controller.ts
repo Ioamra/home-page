@@ -34,20 +34,35 @@ export class AuthController {
 
   @Post('register')
   @UseInterceptors(FileFieldsInterceptor([{ name: 'photo', maxCount: 1 }], { limits: { fileSize: 50 * 1024 * 1024 } }))
-  public async register(@Body() user: RegisterDto, @UploadedFiles() files?: { photo?: MemoryStorageFile[] }): Promise<{ message: string }> {
+  public async register(
+    @Response({ passthrough: true }) res: FastifyReply,
+    @Body() user: RegisterDto,
+    @UploadedFiles() files?: { photo?: MemoryStorageFile[] },
+  ): Promise<{ message: string }> {
     if (!user.email || !user.password) {
       throw new BadRequestException('Missing required fields');
     }
     if (await this.userAccountService.findByEmail(user.email)) {
       throw new ConflictException('Email already used');
     }
-    const { id, verification_code } = await this.authService.register(user.email, user.password);
+    const { id } = await this.authService.register(user.email, user.password);
     if (files?.photo && files.photo[0] && files.photo[0].buffer.length > 0) {
       // Traiter et sauvegarder le fichier
       await this.userAccountService.updatePhoto(id, files.photo[0]);
     }
-    await this.mailService.confirmEmail(user.email, verification_code);
-    return { message: 'Client registered' };
+    const { access_token } = await this.authService.login({
+      id,
+      email: user.email,
+    });
+    return res
+      .setCookie('Authorization', `Bearer ${access_token}`, {
+        httpOnly: true,
+        secure: false,
+        sameSite: 'lax',
+        path: '/',
+      })
+      .code(200)
+      .send({ message: 'Login successful', token: access_token });
   }
 
   @Post('confirm-code')

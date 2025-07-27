@@ -1,7 +1,14 @@
-<main [style.background-image]="'url(' + homeStore.backgroundImageUrl() + ')'">
+<main
+  [style.background-image]="'url(' + homeStore.userInfo().homeSettings.backgroundImageUrl + ')'"
+>
   <div class="home-content">
     <div class="header-actions">
-      <button class="login-btn" (click)="openLoginModal()">Se connecter</button>
+      @if (authStore.isConnected() && homeStore.userInfo().user_account !== null) {
+        <img src="{{ homeStore.userInfo().user_account?.photo }}" alt="" />
+        <button class="btn btn--secondary" (click)="openProfileModal()">Mon profil</button>
+      } @else {
+        <button class="btn btn--secondary" (click)="openAuthModal('login')">Se connecter</button>
+      }
     </div>
   </div>
 

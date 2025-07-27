@@ -4,7 +4,7 @@ import { DeleteResult, UpdateResult } from 'typeorm';
 import { IsConnected } from '../../common/decorators/is-connected.decorator';
 import { CustomRequest } from '../../common/models/request.model';
 import { UpdateUserAccountDto } from './dto/update-user_account.dto';
-import { UserAccount } from './entities/user_account.entity';
+import { UserAccountWithHomeSettings } from './models/query-response.model';
 import { UserAccountService } from './user_account.service';
 
 @Controller('user-account')
@@ -13,13 +13,13 @@ export class UserAccountController {
 
   @Get(':id')
   @IsConnected()
-  public findOne(@Param('id') id: string): Promise<Partial<UserAccount>> {
+  public findOne(@Param('id') id: string): Promise<UserAccountWithHomeSettings> {
     return this.userAccountService.findOne(+id);
   }
 
   @Get('my-info')
   @IsConnected()
-  public findMyInfo(@Request() req: CustomRequest): Promise<Partial<UserAccount>> {
+  public findMyInfo(@Request() req: CustomRequest): Promise<UserAccountWithHomeSettings> {
     return this.userAccountService.findOne(req.user.id);
   }
 

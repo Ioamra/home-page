@@ -8,6 +8,7 @@ import { DeleteResult, Repository, UpdateResult } from 'typeorm';
 import { CreateUserAccountDto } from './dto/create-user_account.dto';
 import { UpdateUserAccountDto } from './dto/update-user_account.dto';
 import { UserAccount } from './entities/user_account.entity';
+import { UserAccountWithHomeSettings } from './models/query-response.model';
 
 @Injectable()
 export class UserAccountService {
@@ -50,15 +51,19 @@ export class UserAccountService {
     return this.userAccountRepository.findOne({ where: { email } });
   }
 
-  public async findAll(): Promise<UserAccount[]> {
-    return this.userAccountRepository.find();
-  }
-
-  public async findOne(id: number): Promise<Partial<UserAccount>> {
+  public async findOne(id: number): Promise<UserAccountWithHomeSettings> {
     const user = await this.userAccountRepository.findOne({ select: ['id', 'email', 'photo', 'created_at', 'password'], where: { id } });
     if (!user) return null;
+    user.photo = 'localhost:3500/common/file/user_account/' + user.photo;
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    const { password, ...result } = user;
+    const { password, ...userResult } = user;
+    const result: UserAccountWithHomeSettings = {
+      userAccount: userResult,
+      homeSettings: {
+        backgroundImageUrl:
+          'https://external-content.duckduckgo.com/iu/?u=https%3A%2F%2Fimg.freepik.com%2Fpremium-photo%2Fflurry-jagged-angular-shapes-digital-art-illustration_783299-1110.jpg&f=1&nofb=1&ipt=4886857085cca3a202adc41b81ea845782e97060f832e2f0c8f32b446682d62c',
+      },
+    };
     return result;
   }
 

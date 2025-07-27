@@ -11,6 +11,7 @@ import {
   inject,
 } from '@angular/core';
 import { AuthStore } from '../../../stores/auth.store';
+import { HomeStore } from '../../../stores/home.store';
 import { LoginData, LoginFormComponent } from '../../forms/login-form/login-form.component';
 import {
   RegisterData,
@@ -31,10 +32,16 @@ export class AuthModalComponent implements OnChanges {
   @Input() initialTab: AuthTab = 'login';
   @Output() closeModal = new EventEmitter<void>();
   @ViewChild('dialog', { static: false }) dialog!: ElementRef<HTMLDialogElement>;
+  @ViewChild(LoginFormComponent) loginForm?: LoginFormComponent;
+  @ViewChild(RegisterFormComponent) registerForm?: RegisterFormComponent;
 
   private readonly authStore = inject(AuthStore);
+  private readonly homeStore = inject(HomeStore);
 
   activeTab: AuthTab = 'login';
+  isLoading = false;
+  errorMessage = '';
+  successMessage = '';
 
   constructor() {
     this.activeTab = this.initialTab;
@@ -44,6 +51,7 @@ export class AuthModalComponent implements OnChanges {
     if (changes['isOpen'] && this.dialog) {
       if (this.isOpen) {
         this.dialog.nativeElement.showModal();
+        this.clearMessages();
       } else {
         this.dialog.nativeElement.close();
       }
@@ -51,6 +59,7 @@ export class AuthModalComponent implements OnChanges {
 
     if (changes['initialTab']) {
       this.activeTab = this.initialTab;
+      this.clearMessages();
     }
   }
 
@@ -62,25 +71,71 @@ export class AuthModalComponent implements OnChanges {
 
   setActiveTab(tab: AuthTab): void {
     this.activeTab = tab;
+    this.clearMessages();
   }
 
   onClose(): void {
+    this.clearMessages();
     this.closeModal.emit();
   }
 
-  onLoginSuccess(_loginData: LoginData): void {
-    // Ici vous pouvez appeler votre service d'authentification
-    // this.authStore.login(loginData);
-    this.closeModal.emit();
+  onLoginSuccess(loginData: LoginData): void {
+    this.isLoading = true;
+    this.clearMessages();
+    this.authStore
+      .login({
+        email: loginData.email,
+        password: loginData.password,
+      })
+      .subscribe({
+        next: () => {
+          this.homeStore.getMyConfig();
+          this.closeModal.emit();
+        },
+        error: error => {
+          this.errorMessage = 'Erreur lors de la connexion. Vérifiez vos identifiants.';
+          console.error('Erreur de connexion:', error);
+        },
+        complete: () => {
+          this.isLoading = false;
+        },
+      });
   }
 
-  onRegisterSuccess(_registerData: RegisterData): void {
-    // Ici vous pouvez appeler votre service d'authentification
-    // this.authStore.register(registerData);
-    this.closeModal.emit();
+  async onRegisterSuccess(registerData: RegisterData): Promise<void> {
+    try {
+      this.isLoading = true;
+      this.clearMessages();
+
+      await this.authStore.register({
+        email: registerData.email,
+        password: registerData.password,
+        photo: null,
+      });
+
+      // Réinitialiser le formulaire
+      if (this.registerForm) {
+        this.registerForm.reset();
+      }
+
+      // Fermer le modal immédiatement après succès
+      this.closeModal.emit();
+    } catch (error) {
+      this.errorMessage = "Erreur lors de l'inscription. L'email est peut-être déjà utilisé.";
+      console.error("Erreur d'inscription:", error);
+    } finally {
+      this.isLoading = false;
+    }
   }
 
   onForgotPassword(): void {
     // Ici vous pouvez implémenter la logique pour mot de passe oublié
+    // Par exemple, ouvrir un autre modal ou rediriger vers une page
+    console.log('Mot de passe oublié - À implémenter');
+  }
+
+  private clearMessages(): void {
+    this.errorMessage = '';
+    this.successMessage = '';
   }
 }

@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component, EventEmitter, Output, inject } from '@angular/core';
+import { Component, EventEmitter, inject, Input, OnChanges, Output } from '@angular/core';
 import {
   AbstractControl,
   FormBuilder,
@@ -21,7 +21,8 @@ export interface LoginData {
   templateUrl: './login-form.component.html',
   styleUrl: './login-form.component.scss',
 })
-export class LoginFormComponent {
+export class LoginFormComponent implements OnChanges {
+  @Input() disabled = false;
   @Output() loginSuccess = new EventEmitter<LoginData>();
   @Output() forgotPassword = new EventEmitter<void>();
 
@@ -36,8 +37,16 @@ export class LoginFormComponent {
     });
   }
 
+  ngOnChanges(): void {
+    if (this.disabled) {
+      this.loginForm.disable();
+    } else {
+      this.loginForm.enable();
+    }
+  }
+
   onSubmit(): void {
-    if (this.loginForm.valid) {
+    if (this.loginForm.valid && !this.disabled) {
       const loginData: LoginData = this.loginForm.value;
       this.loginSuccess.emit(loginData);
     } else {
@@ -46,7 +55,9 @@ export class LoginFormComponent {
   }
 
   onForgotPassword(): void {
-    this.forgotPassword.emit();
+    if (!this.disabled) {
+      this.forgotPassword.emit();
+    }
   }
 
   reset(): void {
