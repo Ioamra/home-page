@@ -29,7 +29,7 @@ export class AuthController {
         path: '/',
       })
       .code(200)
-      .send({ message: 'Login successful', token: access_token });
+      .send({ message: 'Login successful' });
   }
 
   @Post('register')
@@ -62,7 +62,7 @@ export class AuthController {
         path: '/',
       })
       .code(200)
-      .send({ message: 'Login successful', token: access_token });
+      .send({ message: 'Register successful' });
   }
 
   @Post('confirm-code')

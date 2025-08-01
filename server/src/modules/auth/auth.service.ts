@@ -41,15 +41,13 @@ export class AuthService {
     };
   }
 
-  public async register(email: string, password: string): Promise<{ id: number; verification_code: string }> {
+  public async register(email: string, password: string): Promise<{ id: number }> {
     const hashedPassword = await bcrypt.hash(password, await bcrypt.genSalt());
-    const verification_code = Math.floor(100000 + Math.random() * 900000).toString();
     const user_account = await this.userAccountService.create({
       email,
       password: hashedPassword,
-      verification_code,
       photo: config().defaultPhoto,
     });
-    return { id: user_account.id, verification_code };
+    return { id: user_account.id };
   }
 }

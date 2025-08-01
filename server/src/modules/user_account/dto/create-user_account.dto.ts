@@ -13,8 +13,4 @@ export class CreateUserAccountDto {
   @IsOptional()
   @IsString()
   photo?: string;
-
-  @IsString()
-  @IsNotEmpty()
-  verification_code: string;
 }
