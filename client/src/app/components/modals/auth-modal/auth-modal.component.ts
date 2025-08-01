@@ -43,6 +43,8 @@ export class AuthModalComponent implements OnChanges {
   errorMessage = '';
   successMessage = '';
 
+  private closeListener?: () => void;
+
   constructor() {
     this.activeTab = this.initialTab;
   }
@@ -50,8 +52,23 @@ export class AuthModalComponent implements OnChanges {
   ngOnChanges(changes: SimpleChanges): void {
     if (changes['isOpen'] && this.dialog) {
       if (this.isOpen) {
+        // Nettoyer l'ancien listener s'il existe
+        if (this.closeListener) {
+          this.dialog.nativeElement.removeEventListener('close', this.closeListener);
+        }
+
         this.dialog.nativeElement.showModal();
         this.clearMessages();
+
+        // Créer et ajouter le nouveau listener
+        this.closeListener = (): void => {
+          if (this.isOpen) {
+            // Si le dialog se ferme mais que isOpen est encore true,
+            // cela signifie qu'il a été fermé par Échap ou autre
+            this.closeModal.emit();
+          }
+        };
+        this.dialog.nativeElement.addEventListener('close', this.closeListener);
       } else {
         this.dialog.nativeElement.close();
       }
@@ -60,6 +77,12 @@ export class AuthModalComponent implements OnChanges {
     if (changes['initialTab']) {
       this.activeTab = this.initialTab;
       this.clearMessages();
+    }
+  }
+
+  ngOnDestroy(): void {
+    if (this.closeListener && this.dialog) {
+      this.dialog.nativeElement.removeEventListener('close', this.closeListener);
     }
   }
 
@@ -110,7 +133,7 @@ export class AuthModalComponent implements OnChanges {
       await this.authStore.register({
         email: registerData.email,
         password: registerData.password,
-        photo: null,
+        photo: registerData.photo,
       });
 
       // Réinitialiser le formulaire
@@ -131,7 +154,7 @@ export class AuthModalComponent implements OnChanges {
   onForgotPassword(): void {
     // Ici vous pouvez implémenter la logique pour mot de passe oublié
     // Par exemple, ouvrir un autre modal ou rediriger vers une page
-    console.log('Mot de passe oublié - À implémenter');
+    console.warn('Mot de passe oublié - À implémenter');
   }
 
   private clearMessages(): void {

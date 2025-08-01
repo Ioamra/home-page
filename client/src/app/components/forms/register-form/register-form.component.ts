@@ -7,18 +7,20 @@ import {
   ReactiveFormsModule,
   Validators,
 } from '@angular/forms';
+import { ImageInputComponent } from '../../inputs/image-input/image-input.component';
 import { TextInputComponent } from '../../inputs/text-input/text-input.component';
 
 export interface RegisterData {
   email: string;
   password: string;
   confirmPassword: string;
+  photo: File | null;
 }
 
 @Component({
   selector: 'app-register-form',
   standalone: true,
-  imports: [CommonModule, ReactiveFormsModule, TextInputComponent],
+  imports: [CommonModule, ReactiveFormsModule, TextInputComponent, ImageInputComponent],
   templateUrl: './register-form.component.html',
   styleUrl: './register-form.component.scss',
 })
@@ -36,6 +38,7 @@ export class RegisterFormComponent implements OnChanges {
         email: ['', [Validators.required, Validators.email]],
         password: ['', [Validators.required, Validators.minLength(6)]],
         confirmPassword: ['', [Validators.required]],
+        photo: [null], // Pas obligatoire
       },
       { validators: this.passwordMatchValidator },
     );
@@ -83,5 +86,9 @@ export class RegisterFormComponent implements OnChanges {
 
   get confirmPassword(): AbstractControl | null {
     return this.registerForm.get('confirmPassword');
+  }
+
+  get photo(): AbstractControl | null {
+    return this.registerForm.get('photo');
   }
 }

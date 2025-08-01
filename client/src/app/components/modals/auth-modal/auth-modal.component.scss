@@ -70,7 +70,7 @@ dialog {
 
   main {
     @include Flex(center, center, column);
-    padding: 1em;
+    padding: 1rem;
     position: relative;
 
     app-login-form,

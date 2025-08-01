@@ -2,7 +2,7 @@
 
 form {
   @include Flex(center, center, column);
-  gap: 1em;
+  gap: 1rem;
 
   app-text-input,
   .btn {

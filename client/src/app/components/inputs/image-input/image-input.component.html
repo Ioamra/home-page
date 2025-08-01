@@ -1,1 +1,116 @@
-<p>image-input works!</p>
+<div class="image-input">
+  <div class="label">
+    {{ label }}
+    @if (required) {
+      <span class="required" aria-label="requis">*</span>
+    }
+  </div>
+
+  <!-- Input file caché -->
+  <input
+    #fileInput
+    type="file"
+    accept="image/*"
+    (change)="onFileSelected($event)"
+    id="image-file-input"
+    hidden
+  />
+
+  <!-- Zone de sélection d'image -->
+  @if (!croppedImage && !showCropper) {
+    <label
+      for="image-file-input"
+      class="upload-zone"
+      tabindex="0"
+      (keydown.enter)="openFileDialog()"
+      (keydown.space)="openFileDialog(); $event.preventDefault()"
+      role="button"
+      aria-label="Cliquez pour sélectionner une image"
+    >
+      <section class="upload-content">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" aria-hidden="true">
+          <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" />
+          <polyline points="17,8 12,3 7,8" />
+          <line x1="12" y1="3" x2="12" y2="15" />
+        </svg>
+        <p class="upload-text">Cliquez pour sélectionner une image</p>
+        <p class="upload-subtext">PNG, JPG, JPEG, WEBP jusqu'à 50MB</p>
+      </section>
+    </label>
+  }
+
+  <!-- Message d'erreur -->
+  @if (errorMessage) {
+    <output role="alert" aria-live="polite">
+      {{ errorMessage }}
+    </output>
+  }
+
+  <!-- Cropper modal -->
+  @if (showCropper && imageChangedEvent) {
+    <div
+      class="cropper-overlay"
+      (click)="onOverlayClick($event)"
+      (keydown.escape)="cancelCrop()"
+      tabindex="0"
+    >
+      <div
+        class="cropper-modal"
+        tabindex="0"
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby="cropper-title"
+      >
+        <header>
+          <h2 id="cropper-title">Redimensionner l'image</h2>
+        </header>
+
+        <section class="cropper-content">
+          <image-cropper
+            [imageChangedEvent]="imageChangedEvent"
+            [aspectRatio]="aspectRatio"
+            [resizeToWidth]="maxWidth"
+            [resizeToHeight]="maxHeight"
+            [cropperMinWidth]="100"
+            [cropperMinHeight]="100"
+            [onlyScaleDown]="true"
+            (imageCropped)="onImageCropped($event)"
+            (imageLoaded)="onImageLoaded($event)"
+            (cropperReady)="onCropperReady()"
+            (loadImageFailed)="onLoadImageFailed()"
+          ></image-cropper>
+        </section>
+
+        <div class="actions">
+          <button type="button" class="btn btn--secondary" (click)="cancelCrop()">Annuler</button>
+          <button type="button" class="btn btn--primary" (click)="confirmCrop()">Confirmer</button>
+        </div>
+      </div>
+    </div>
+  }
+
+  <!-- Prévisualisation de l'image -->
+  @if (croppedImage && !showCropper) {
+    <figure class="preview">
+      <div class="preview-container">
+        <img [src]="croppedImage" alt="Image sélectionnée" />
+        <button
+          type="button"
+          class="remove-btn"
+          (click)="removeImage()"
+          aria-label="Supprimer l'image"
+        >
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" aria-hidden="true">
+            <line x1="18" y1="6" x2="6" y2="18"></line>
+            <line x1="6" y1="6" x2="18" y2="18"></line>
+          </svg>
+        </button>
+      </div>
+    </figure>
+    <div class="actions">
+      <button type="button" class="btn btn--secondary btn--small" (click)="openFileDialog()">
+        Changer l'image
+      </button>
+    </div>
+  }
+</div>

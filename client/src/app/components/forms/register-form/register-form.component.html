@@ -26,6 +26,16 @@
   >
   </app-text-input>
 
+  <app-image-input
+    label="Photo de profil (optionnelle)"
+    [aspectRatio]="1"
+    [maxWidth]="400"
+    [maxHeight]="400"
+    [required]="false"
+    formControlName="photo"
+  >
+  </app-image-input>
+
   @if (registerForm.hasError('passwordMismatch') && confirmPassword?.touched) {
     <p class="error">Les mots de passe ne correspondent pas</p>
   }

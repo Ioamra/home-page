@@ -2,9 +2,10 @@
 
 form {
   @include Flex($direction: column);
-  gap: 1em;
+  gap: 1rem;
 
   app-text-input,
+  app-image-input,
   .btn {
     width: 100%;
   }
