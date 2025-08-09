@@ -1,11 +1,20 @@
-<dialog #dialog (click)="onBackdropClick($event)" (keydown.escape)="onClose()" tabindex="0">
-  <header>
-    <h2>{{ title }}</h2>
-    <button (click)="onClose()">
-      <span>&times;</span>
-    </button>
-  </header>
-  <main>
-    <ng-content />
-  </main>
-</dialog>
+@if (isOpen) {
+  <div
+    class="modal-overlay"
+    (click)="onBackdropClick($event)"
+    (keydown.escape)="onClose()"
+    tabindex="0"
+  >
+    <section class="modal" tabindex="0">
+      <header>
+        <h2>{{ title }}</h2>
+        <button (click)="onClose()">
+          <span>&times;</span>
+        </button>
+      </header>
+      <main>
+        <ng-content />
+      </main>
+    </section>
+  </div>
+}

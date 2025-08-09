@@ -1,14 +1,5 @@
 import { CommonModule } from '@angular/common';
-import {
-  Component,
-  ElementRef,
-  EventEmitter,
-  Input,
-  OnChanges,
-  Output,
-  SimpleChanges,
-  ViewChild,
-} from '@angular/core';
+import { Component, EventEmitter, Input, Output } from '@angular/core';
 
 @Component({
   selector: 'app-base-modal',
@@ -17,28 +8,17 @@ import {
   templateUrl: './base-modal.component.html',
   styleUrl: './base-modal.component.scss',
 })
-export class BaseModalComponent implements OnChanges {
+export class BaseModalComponent {
   @Input() isOpen = false;
   @Input() title = '';
   @Output() closeModal = new EventEmitter<void>();
-  @ViewChild('dialog', { static: false }) dialog!: ElementRef<HTMLDialogElement>;
-
-  ngOnChanges(changes: SimpleChanges): void {
-    if (changes['isOpen'] && this.dialog) {
-      if (this.isOpen) {
-        this.dialog.nativeElement.showModal();
-      } else {
-        this.dialog.nativeElement.close();
-      }
-    }
-  }
 
   onClose(): void {
     this.closeModal.emit();
   }
 
   onBackdropClick(event: MouseEvent): void {
-    if (event.target === this.dialog.nativeElement) {
+    if (event.target === event.currentTarget) {
       this.onClose();
     }
   }

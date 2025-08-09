@@ -54,13 +54,7 @@
       (keydown.escape)="cancelCrop()"
       tabindex="0"
     >
-      <div
-        class="cropper-modal"
-        tabindex="0"
-        role="dialog"
-        aria-modal="true"
-        aria-labelledby="cropper-title"
-      >
+      <section class="cropper-modal" tabindex="0" aria-labelledby="cropper-title">
         <header>
           <h2 id="cropper-title">Redimensionner l'image</h2>
         </header>
@@ -85,7 +79,7 @@
           <button type="button" class="btn btn--secondary" (click)="cancelCrop()">Annuler</button>
           <button type="button" class="btn btn--primary" (click)="confirmCrop()">Confirmer</button>
         </div>
-      </div>
+      </section>
     </div>
   }
 

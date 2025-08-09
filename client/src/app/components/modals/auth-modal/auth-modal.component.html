@@ -1,74 +1,81 @@
-<dialog
-  #dialog
-  (click)="onBackdropClick($event)"
-  (keydown.escape)="onClose()"
-  [attr.aria-label]="activeTab === 'login' ? 'Connexion' : 'Inscription'"
-  tabindex="0"
->
-  <header>
-    <nav role="tablist">
-      <button
-        type="button"
-        [class.active]="activeTab === 'login'"
-        (click)="setActiveTab('login')"
-        role="tab"
-        id="login-tab"
-        [attr.aria-selected]="activeTab === 'login'"
-        aria-controls="login-panel"
-        [disabled]="isLoading"
-      >
-        Connexion
-      </button>
-      <button
-        type="button"
-        [class.active]="activeTab === 'register'"
-        (click)="setActiveTab('register')"
-        role="tab"
-        id="register-tab"
-        [attr.aria-selected]="activeTab === 'register'"
-        aria-controls="register-panel"
-        [disabled]="isLoading"
-      >
-        Inscription
-      </button>
-    </nav>
-  </header>
+@if (isOpen) {
+  <div
+    class="modal-overlay"
+    (click)="onBackdropClick($event)"
+    (keydown.escape)="onClose()"
+    tabindex="0"
+  >
+    <section
+      class="auth-modal"
+      [attr.aria-label]="activeTab === 'login' ? 'Connexion' : 'Inscription'"
+      tabindex="0"
+    >
+      <header>
+        <nav role="tablist">
+          <button
+            type="button"
+            [class.active]="activeTab === 'login'"
+            (click)="setActiveTab('login')"
+            role="tab"
+            id="login-tab"
+            [attr.aria-selected]="activeTab === 'login'"
+            aria-controls="login-panel"
+            [disabled]="isLoading"
+          >
+            Connexion
+          </button>
+          <button
+            type="button"
+            [class.active]="activeTab === 'register'"
+            (click)="setActiveTab('register')"
+            role="tab"
+            id="register-tab"
+            [attr.aria-selected]="activeTab === 'register'"
+            aria-controls="register-panel"
+            [disabled]="isLoading"
+          >
+            Inscription
+          </button>
+        </nav>
+      </header>
 
-  <main>
-    <!-- Messages d'erreur et de succès -->
-    @if (errorMessage) {
-      <div class="message message--error">
-        {{ errorMessage }}
-      </div>
-    }
+      <main>
+        <!-- Messages d'erreur et de succès -->
+        @if (errorMessage) {
+          <div class="message message--error">
+            {{ errorMessage }}
+          </div>
+        }
 
-    <!-- Indicateur de chargement -->
-    @if (isLoading) {
-      <div class="loading-overlay">
-        <div class="spinner"></div>
-        <p>{{ activeTab === 'login' ? 'Connexion en cours...' : 'Inscription en cours...' }}</p>
-      </div>
-    }
+        <!-- Indicateur de chargement -->
+        @if (isLoading) {
+          <div class="loading-overlay">
+            <div class="spinner"></div>
+            <p>{{ activeTab === 'login' ? 'Connexion en cours...' : 'Inscription en cours...' }}</p>
+          </div>
+        }
 
-    @if (activeTab === 'login') {
-      <app-login-form
-        #loginForm
-        id="login-panel"
-        role="tabpanel"
-        aria-labelledby="login-tab"
-        (loginSuccess)="onLoginSuccess($event)"
-        (forgotPassword)="onForgotPassword()"
-        [class.disabled]="isLoading"
-      />
-    } @else {
-      <app-register-form
-        #registerForm
-        id="register-panel"
-        role="tabpanel"
-        aria-labelledby="register-tab"
-        (registerSuccess)="onRegisterSuccess($event)"
-        [class.disabled]="isLoading"
-      />
-    }
-  </main>
-</dialog>
+        @if (activeTab === 'login') {
+          <app-login-form
+            #loginForm
+            id="login-panel"
+            role="tabpanel"
+            aria-labelledby="login-tab"
+            (loginSuccess)="onLoginSuccess($event)"
+            (forgotPassword)="onForgotPassword()"
+            [class.disabled]="isLoading"
+          />
+        } @else {
+          <app-register-form
+            #registerForm
+            id="register-panel"
+            role="tabpanel"
+            aria-labelledby="register-tab"
+            (registerSuccess)="onRegisterSuccess($event)"
+            [class.disabled]="isLoading"
+          />
+        }
+      </main>
+    </section>
+  </div>
+}

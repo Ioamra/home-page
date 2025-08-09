@@ -1,15 +1,5 @@
 import { CommonModule } from '@angular/common';
-import {
-  Component,
-  ElementRef,
-  EventEmitter,
-  Input,
-  OnChanges,
-  Output,
-  SimpleChanges,
-  ViewChild,
-  inject,
-} from '@angular/core';
+import { Component, EventEmitter, Input, Output, ViewChild, inject } from '@angular/core';
 import { AuthStore } from '../../../stores/auth.store';
 import { HomeStore } from '../../../stores/home.store';
 import { LoginData, LoginFormComponent } from '../../forms/login-form/login-form.component';
@@ -27,11 +17,10 @@ type AuthTab = 'login' | 'register';
   templateUrl: './auth-modal.component.html',
   styleUrl: './auth-modal.component.scss',
 })
-export class AuthModalComponent implements OnChanges {
+export class AuthModalComponent {
   @Input() isOpen = false;
   @Input() initialTab: AuthTab = 'login';
   @Output() closeModal = new EventEmitter<void>();
-  @ViewChild('dialog', { static: false }) dialog!: ElementRef<HTMLDialogElement>;
   @ViewChild(LoginFormComponent) loginForm?: LoginFormComponent;
   @ViewChild(RegisterFormComponent) registerForm?: RegisterFormComponent;
 
@@ -43,51 +32,12 @@ export class AuthModalComponent implements OnChanges {
   errorMessage = '';
   successMessage = '';
 
-  private closeListener?: () => void;
-
   constructor() {
     this.activeTab = this.initialTab;
   }
 
-  ngOnChanges(changes: SimpleChanges): void {
-    if (changes['isOpen'] && this.dialog) {
-      if (this.isOpen) {
-        // Nettoyer l'ancien listener s'il existe
-        if (this.closeListener) {
-          this.dialog.nativeElement.removeEventListener('close', this.closeListener);
-        }
-
-        this.dialog.nativeElement.showModal();
-        this.clearMessages();
-
-        // Créer et ajouter le nouveau listener
-        this.closeListener = (): void => {
-          if (this.isOpen) {
-            // Si le dialog se ferme mais que isOpen est encore true,
-            // cela signifie qu'il a été fermé par Échap ou autre
-            this.closeModal.emit();
-          }
-        };
-        this.dialog.nativeElement.addEventListener('close', this.closeListener);
-      } else {
-        this.dialog.nativeElement.close();
-      }
-    }
-
-    if (changes['initialTab']) {
-      this.activeTab = this.initialTab;
-      this.clearMessages();
-    }
-  }
-
-  ngOnDestroy(): void {
-    if (this.closeListener && this.dialog) {
-      this.dialog.nativeElement.removeEventListener('close', this.closeListener);
-    }
-  }
-
   onBackdropClick(event: MouseEvent): void {
-    if (event.target === this.dialog.nativeElement) {
+    if (event.target === event.currentTarget) {
       this.onClose();
     }
   }
