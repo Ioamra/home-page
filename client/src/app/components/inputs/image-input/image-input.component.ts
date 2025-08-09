@@ -131,7 +131,33 @@ export class ImageInputComponent implements ControlValueAccessor, OnInit, OnDest
   }
 
   onImageLoaded(_image: LoadedImage): void {
-    // L'image est chargée dans le cropper
+    const cropperContent = document.querySelector('.cropper-content') as HTMLElement;
+    if (cropperContent) {
+      const originalWidth = _image.original.size.width;
+      const originalHeight = _image.original.size.height;
+      const ratio = originalWidth / originalHeight;
+
+      // Calculer les dimensions maximales autorisées
+      const maxWidth = window.innerWidth - 64 - 32;
+      const maxHeight = window.innerHeight - 64 - 126;
+
+      let width = originalWidth;
+      let height = originalHeight;
+
+      // Ajuster les dimensions en gardant le ratio
+      if (width > maxWidth) {
+        width = maxWidth;
+        height = width / ratio;
+      }
+
+      if (height > maxHeight) {
+        height = maxHeight;
+        width = height * ratio;
+      }
+
+      cropperContent.style.width = `${width}px`;
+      cropperContent.style.height = `${height}px`;
+    }
   }
 
   onCropperReady(): void {

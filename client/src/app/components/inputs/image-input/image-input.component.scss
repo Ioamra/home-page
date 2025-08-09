@@ -90,8 +90,8 @@
     background: white;
     border-radius: 0.5rem;
     box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1);
-    max-width: 90vw;
-    max-height: 90vh;
+    max-width: calc(100dvw - 4rem);
+    max-height: calc(100dvh - 4rem);
     overflow: hidden;
 
     header {
@@ -108,10 +108,7 @@
     }
 
     .cropper-content {
-      padding: 1rem;
-      max-width: 400px;
-      max-height: 400px;
-      overflow: hidden;
+      margin: 0 1rem;
     }
 
     .actions {
