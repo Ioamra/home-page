@@ -61,7 +61,7 @@ export class AuthController {
         sameSite: 'lax',
         path: '/',
       })
-      .code(200)
+      .code(201)
       .send({ message: 'Register successful' });
   }
 

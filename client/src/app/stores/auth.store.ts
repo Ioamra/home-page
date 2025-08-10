@@ -28,7 +28,6 @@ export const AuthStore = signalStore(
           if (response.status === 200) {
             patchState(store, {
               isConnected: true,
-              isLoading: false,
               error: null,
             });
           } else {
@@ -44,27 +43,26 @@ export const AuthStore = signalStore(
       );
     },
 
-    register: (dto: RegisterRequest): void => {
+    register: (dto: RegisterRequest): Observable<HttpResponse<AuthResponse>> => {
       patchState(store, { isLoading: true, error: null });
-      authApiService.register(dto).subscribe({
-        next: response => {
+      return authApiService.register(dto).pipe(
+        tap(response => {
           if (response.status === 201) {
             patchState(store, {
-              isLoading: false,
-              error: null,
               isConnected: true,
+              error: null,
             });
           } else {
             throw new Error("Erreur lors de l'inscription");
           }
-        },
-        error: () => {
+        }),
+        catchError(() => {
           throw new Error("Erreur lors de l'inscription");
-        },
-        complete: () => {
+        }),
+        finalize(() => {
           patchState(store, { isLoading: false });
-        },
-      });
+        }),
+      );
     },
 
     setIsConnected: (isConnected: boolean): void => {

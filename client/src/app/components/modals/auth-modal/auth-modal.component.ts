@@ -80,19 +80,25 @@ export class AuthModalComponent {
       this.isLoading = true;
       this.clearMessages();
 
-      await this.authStore.register({
-        email: registerData.email,
-        password: registerData.password,
-        photo: registerData.photo,
-      });
-
-      // Réinitialiser le formulaire
-      if (this.registerForm) {
-        this.registerForm.reset();
-      }
-
-      // Fermer le modal immédiatement après succès
-      this.closeModal.emit();
+      await this.authStore
+        .register({
+          email: registerData.email,
+          password: registerData.password,
+          photo: registerData.photo,
+        })
+        .subscribe({
+          next: () => {
+            this.homeStore.getMyConfig();
+            this.closeModal.emit();
+          },
+          error: error => {
+            this.errorMessage = "Erreur lors de l'inscription. Vérifiez vos identifiants.";
+            console.error('Erreur de connexion:', error);
+          },
+          complete: () => {
+            this.isLoading = false;
+          },
+        });
     } catch (error) {
       this.errorMessage = "Erreur lors de l'inscription. L'email est peut-être déjà utilisé.";
       console.error("Erreur d'inscription:", error);
