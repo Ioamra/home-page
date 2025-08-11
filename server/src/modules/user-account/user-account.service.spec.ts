@@ -1,8 +1,8 @@
 import { ConfigService } from '@nestjs/config';
 import { Test, TestingModule } from '@nestjs/testing';
 import { getRepositoryToken } from '@nestjs/typeorm';
-import { UserAccount } from './entities/user_account.entity';
-import { UserAccountService } from './user_account.service';
+import { UserAccount } from './entities/user-account.entity';
+import { UserAccountService } from './user-account.service';
 
 describe('UserAccountService', () => {
   let service: UserAccountService;

@@ -1,10 +1,12 @@
+import { MemoryStorageFile } from '@blazity/nest-file-fastify';
 import { Injectable } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import * as bcrypt from 'bcrypt';
 import { UserInfoInJwt } from 'src/common/models/request.model';
 import { config } from '../../config/config';
-import { UserAccount } from '../user_account/entities/user_account.entity';
-import { UserAccountService } from '../user_account/user_account.service';
+import { UserAccount } from '../user-account/entities/user-account.entity';
+import { UserAccountService } from '../user-account/user-account.service';
+import { RegisterDto } from './dto/register.dto';
 
 @Injectable()
 export class AuthService {
@@ -41,13 +43,15 @@ export class AuthService {
     };
   }
 
-  public async register(email: string, password: string): Promise<{ id: number }> {
-    const hashedPassword = await bcrypt.hash(password, await bcrypt.genSalt());
-    const user_account = await this.userAccountService.create({
-      email,
-      password: hashedPassword,
-      photo: config().defaultPhoto,
-    });
+  public async register(RegisterDto: RegisterDto, photo?: MemoryStorageFile): Promise<{ id: number }> {
+    const hashedPassword = await bcrypt.hash(RegisterDto.password, await bcrypt.genSalt());
+    const user_account = await this.userAccountService.create(
+      {
+        email: RegisterDto.email,
+        password: hashedPassword,
+      },
+      photo,
+    );
     return { id: user_account.id };
   }
 }

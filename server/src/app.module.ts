@@ -8,7 +8,13 @@ import { CustomCacheModule } from './common/custom-cache/custom-cache.module';
 import { IsConnectedGuard } from './common/guards/is-connected.guard';
 import { config } from './config/config';
 import { AuthModule } from './modules/auth/auth.module';
-import { UserAccountModule } from './modules/user_account/user_account.module';
+import { BackgroundModule } from './modules/background/background.module';
+import { LinkModule } from './modules/link/link.module';
+import { PresetBackgroundModule } from './modules/preset-background/preset-background.module';
+import { PresetLinkModule } from './modules/preset-link/preset-link.module';
+import { PresetSearchBarModule } from './modules/preset-search-bar/preset-search-bar.module';
+import { SearchBarModule } from './modules/search-bar/search-bar.module';
+import { UserAccountModule } from './modules/user-account/user-account.module';
 
 @Module({
   imports: [
@@ -54,6 +60,12 @@ import { UserAccountModule } from './modules/user_account/user_account.module';
     CustomCacheModule,
     AuthModule,
     UserAccountModule,
+    SearchBarModule,
+    PresetSearchBarModule,
+    LinkModule,
+    PresetLinkModule,
+    BackgroundModule,
+    PresetBackgroundModule,
   ],
   providers: [
     {

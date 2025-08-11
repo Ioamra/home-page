@@ -6,6 +6,7 @@ import { AuthStore } from './auth.store';
 
 interface HomeState {
   userInfo: UserInfo;
+  data: unknown;
   isLoading: boolean;
 }
 
@@ -17,6 +18,7 @@ const initialState: HomeState = {
         'https://external-content.duckduckgo.com/iu/?u=https%3A%2F%2Fimg.freepik.com%2Fpremium-photo%2Fflurry-jagged-angular-shapes-digital-art-illustration_783299-1110.jpg&f=1&nofb=1&ipt=4886857085cca3a202adc41b81ea845782e97060f832e2f0c8f32b446682d62c',
     },
   },
+  data: null,
   isLoading: false,
 };
 
@@ -29,7 +31,7 @@ export const HomeStore = signalStore(
       homeApiService.getMyInfo().subscribe({
         next: response => {
           if (response.status === 200 && response.body) {
-            patchState(store, { userInfo: response.body });
+            patchState(store, { data: response.body });
             authStore.setIsConnected(true);
           } else {
             throw new Error("L'utilisateur n'est pas connecté");

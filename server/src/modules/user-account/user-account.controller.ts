@@ -3,9 +3,9 @@ import { Body, Controller, Delete, Get, Param, Patch, Request, UseInterceptors }
 import { DeleteResult, UpdateResult } from 'typeorm';
 import { IsConnected } from '../../common/decorators/is-connected.decorator';
 import { CustomRequest } from '../../common/models/request.model';
-import { UpdateUserAccountDto } from './dto/update-user_account.dto';
-import { UserAccountWithHomeSettings } from './models/query-response.model';
-import { UserAccountService } from './user_account.service';
+import { UpdateUserAccountDto } from './dto/update-user-account.dto';
+import { UserAccount } from './entities/user-account.entity';
+import { UserAccountService } from './user-account.service';
 
 @Controller('user-account')
 export class UserAccountController {
@@ -13,13 +13,13 @@ export class UserAccountController {
 
   @Get(':id')
   @IsConnected()
-  public findOne(@Param('id') id: string): Promise<UserAccountWithHomeSettings> {
+  public findOne(@Param('id') id: string): Promise<UserAccount> {
     return this.userAccountService.findOne(+id);
   }
 
   @Get('my-info')
   @IsConnected()
-  public findMyInfo(@Request() req: CustomRequest): Promise<UserAccountWithHomeSettings> {
+  public findMyInfo(@Request() req: CustomRequest): Promise<UserAccount> {
     return this.userAccountService.findOne(req.user.id);
   }
 
@@ -31,19 +31,11 @@ export class UserAccountController {
     @Body() updateUserAccountDto?: UpdateUserAccountDto,
     @UploadedFiles() files?: { photo?: MemoryStorageFile[] },
   ): Promise<UpdateResult> {
-    if (!files?.photo && Object.keys(updateUserAccountDto).length === 0) {
+    if (!files?.photo && (!updateUserAccountDto || Object.keys(updateUserAccountDto).length === 0)) {
       throw new Error('No data to update');
     }
-    if (files?.photo && Object.keys(updateUserAccountDto).length > 0) {
-      void this.userAccountService.updatePhoto(+id, files.photo[0]);
-      return this.userAccountService.update(+id, updateUserAccountDto);
-    }
-    if (files?.photo) {
-      return this.userAccountService.updatePhoto(+id, files.photo[0]);
-    }
-    if (Object.keys(updateUserAccountDto).length > 0) {
-      return this.userAccountService.update(+id, updateUserAccountDto);
-    }
+
+    return this.userAccountService.update(+id, updateUserAccountDto || {}, files?.photo?.[0]);
   }
 
   @Patch('reset-photo/:id')

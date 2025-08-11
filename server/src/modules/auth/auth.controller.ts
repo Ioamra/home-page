@@ -1,9 +1,9 @@
-import { FileFieldsInterceptor, MemoryStorageFile, UploadedFiles } from '@blazity/nest-file-fastify';
+import { FileInterceptor, MemoryStorageFile, UploadedFile } from '@blazity/nest-file-fastify';
 import { BadRequestException, Body, ConflictException, Controller, Post, Request, Response, UseGuards, UseInterceptors } from '@nestjs/common';
 import { FastifyReply } from 'fastify';
 import { CustomRequest } from 'src/common/models/request.model';
 import { MailService } from '../../common/services/mail.service';
-import { UserAccountService } from '../user_account/user_account.service';
+import { UserAccountService } from '../user-account/user-account.service';
 import { AuthService } from './auth.service';
 import { ConfirmCodeDto } from './dto/confirm-code.dto';
 import { RegisterDto } from './dto/register.dto';
@@ -33,11 +33,11 @@ export class AuthController {
   }
 
   @Post('register')
-  @UseInterceptors(FileFieldsInterceptor([{ name: 'photo', maxCount: 1 }], { limits: { fileSize: 50 * 1024 * 1024 } }))
+  @UseInterceptors(FileInterceptor('photo', { limits: { fileSize: 50 * 1024 * 1024 } }))
   public async register(
     @Response({ passthrough: true }) res: FastifyReply,
     @Body() user: RegisterDto,
-    @UploadedFiles() files?: { photo?: MemoryStorageFile[] },
+    @UploadedFile() photo?: MemoryStorageFile,
   ): Promise<{ message: string }> {
     if (!user.email || !user.password) {
       throw new BadRequestException('Missing required fields');
@@ -45,13 +45,15 @@ export class AuthController {
     if (await this.userAccountService.findByEmail(user.email)) {
       throw new ConflictException('Email already used');
     }
-    const { id } = await this.authService.register(user.email, user.password);
-    if (files?.photo && files.photo[0] && files.photo[0].buffer.length > 0) {
-      // Traiter et sauvegarder le fichier
-      await this.userAccountService.updatePhoto(id, files.photo[0]);
+    let createdUser;
+    if (photo && photo.buffer.length > 0) {
+      createdUser = await this.authService.register(user, photo);
+    } else {
+      createdUser = await this.authService.register(user);
     }
+
     const { access_token } = await this.authService.login({
-      id,
+      id: createdUser.id,
       email: user.email,
     });
     return res

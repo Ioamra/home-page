@@ -5,10 +5,9 @@ import { InjectRepository } from '@nestjs/typeorm';
 import * as fs from 'fs';
 import * as path from 'path';
 import { DeleteResult, Repository, UpdateResult } from 'typeorm';
-import { CreateUserAccountDto } from './dto/create-user_account.dto';
-import { UpdateUserAccountDto } from './dto/update-user_account.dto';
-import { UserAccount } from './entities/user_account.entity';
-import { UserAccountWithHomeSettings } from './models/query-response.model';
+import { CreateUserAccountDto } from './dto/create-user-account.dto';
+import { UpdateUserAccountDto } from './dto/update-user-account.dto';
+import { UserAccount } from './entities/user-account.entity';
 
 @Injectable()
 export class UserAccountService {
@@ -18,8 +17,18 @@ export class UserAccountService {
     private readonly configService: ConfigService,
   ) {}
 
-  public async create(createUserAccountDto: CreateUserAccountDto): Promise<UserAccount> {
-    return this.userAccountRepository.save(createUserAccountDto);
+  public async create(createUserAccountDto: CreateUserAccountDto, photo?: MemoryStorageFile): Promise<UserAccount> {
+    const user_account = await this.userAccountRepository.save({
+      ...createUserAccountDto,
+      photo: this.configService.get<string>('defaultPhoto'),
+    });
+    if (photo) {
+      const ext = photo.mimetype.split('/')[1];
+      await this.userAccountRepository.update(user_account.id, { photo: `${user_account.id}.${ext}` });
+      const uploadPath = path.join(__dirname, `../../../upload/user-account`, `${user_account.id}.${ext}`);
+      fs.writeFileSync(uploadPath, photo.buffer);
+    }
+    return user_account;
   }
 
   public async findForLogin(email: string): Promise<UserAccount | null> {
@@ -51,59 +60,57 @@ export class UserAccountService {
     return this.userAccountRepository.findOne({ where: { email } });
   }
 
-  public async findOne(id: number): Promise<UserAccountWithHomeSettings> {
-    const user = await this.userAccountRepository.findOne({ select: ['id', 'email', 'photo', 'created_at', 'password'], where: { id } });
-    if (!user) return null;
-    user.photo = 'localhost:3500/common/file/user_account/' + user.photo;
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    const { password, ...userResult } = user;
-    const result: UserAccountWithHomeSettings = {
-      userAccount: userResult,
-      homeSettings: {
-        backgroundImageUrl:
-          'https://external-content.duckduckgo.com/iu/?u=https%3A%2F%2Fimg.freepik.com%2Fpremium-photo%2Fflurry-jagged-angular-shapes-digital-art-illustration_783299-1110.jpg&f=1&nofb=1&ipt=4886857085cca3a202adc41b81ea845782e97060f832e2f0c8f32b446682d62c',
-      },
-    };
-    return result;
+  public async findOne(id: number): Promise<UserAccount> {
+    const userInfo = await this.userAccountRepository.findOne({
+      where: { id },
+      relations: ['backgrounds', 'search_bars', 'links', 'preset_backgrounds', 'preset_links', 'preset_search_bars'],
+    });
+    delete userInfo.password;
+    return userInfo;
   }
 
   public async updateVerificationCode(id: number, verification_code: string): Promise<UpdateResult> {
     return this.userAccountRepository.update(id, { verification_code, verification_date: new Date().toISOString() });
   }
 
-  public async updatePhoto(id: number, photo: MemoryStorageFile): Promise<UpdateResult> {
-    const user_account = await this.userAccountRepository.findOne({ where: { id } });
-    if (user_account?.photo) {
-      const oldPhotoPath = path.join(__dirname, `../../../upload/user_account`, user_account.photo);
-      if (fs.existsSync(oldPhotoPath) && !user_account.photo.startsWith('default')) {
-        fs.unlinkSync(oldPhotoPath);
+  public async update(id: number, updateUserAccountDto: UpdateUserAccountDto, photo?: MemoryStorageFile): Promise<UpdateResult> {
+    if (photo) {
+      // Récupérer l'utilisateur actuel pour gérer l'ancienne photo
+      const user_account = await this.userAccountRepository.findOne({ where: { id } });
+      if (user_account?.photo) {
+        const oldPhotoPath = path.join(__dirname, `../../../upload/user-account`, user_account.photo);
+        if (fs.existsSync(oldPhotoPath) && !user_account.photo.startsWith('default')) {
+          fs.unlinkSync(oldPhotoPath);
+        }
       }
-    }
-    const ext = photo.mimetype.split('/')[1];
-    const uploadPath = path.join(__dirname, `../../../upload/user_account`, `${id}.${ext}`);
-    fs.writeFileSync(uploadPath, photo.buffer);
-    return this.userAccountRepository.update(id, { photo: `${id}.${ext}` });
-  }
 
-  public async update(id: number, updateUserAccountDto: UpdateUserAccountDto): Promise<UpdateResult> {
+      // Sauvegarder la nouvelle photo
+      const ext = photo.mimetype.split('/')[1];
+      const uploadPath = path.join(__dirname, `../../../upload/user-account`, `${id}.${ext}`);
+      fs.writeFileSync(uploadPath, photo.buffer);
+
+      // Ajouter le nom de fichier au DTO
+      (updateUserAccountDto as UpdateUserAccountDto & { photo?: string }).photo = `${id}.${ext}`;
+    }
+
     return this.userAccountRepository.update(id, updateUserAccountDto);
   }
 
   public async resetPhoto(id: number): Promise<UpdateResult> {
     const user_account = await this.userAccountRepository.findOne({ where: { id }, relations: ['client', 'admin', 'veterinarian'] });
     if (user_account?.photo) {
-      const oldPhotoPath = path.join(__dirname, `../../../upload/user_account`, user_account.photo);
+      const oldPhotoPath = path.join(__dirname, `../../../upload/user-account`, user_account.photo);
       if (fs.existsSync(oldPhotoPath) && !user_account.photo.startsWith('default')) {
         fs.unlinkSync(oldPhotoPath);
       }
     }
-    let photo = this.configService.get<string>('user_account.defaultPhoto');
+    let photo = this.configService.get<string>('defaultPhoto');
     return this.userAccountRepository.update(id, { photo });
   }
 
   public async remove(id: number): Promise<DeleteResult> {
     const user_account = await this.userAccountRepository.findOne({ where: { id } });
-    const oldPhotoPath = path.join(__dirname, `../../../upload/user_account`, user_account.photo);
+    const oldPhotoPath = path.join(__dirname, `../../../upload/user-account`, user_account.photo);
     if (fs.existsSync(oldPhotoPath) && !user_account.photo.startsWith('default')) {
       fs.unlinkSync(oldPhotoPath);
     }
