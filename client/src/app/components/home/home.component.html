@@ -3,7 +3,7 @@
 >
   <div class="home-content">
     <div class="header-actions">
-      @if (authStore.isConnected() && homeStore.userInfo().user_account !== null) {
+      @if (authStore.isConnected()) {
         <img src="{{ homeStore.userInfo().user_account?.photo }}" alt="" />
         <button class="btn btn--secondary" (click)="openProfileModal()">Mon profil</button>
       } @else {

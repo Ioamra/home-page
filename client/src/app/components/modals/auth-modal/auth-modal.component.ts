@@ -62,7 +62,6 @@ export class AuthModalComponent {
       })
       .subscribe({
         next: () => {
-          this.homeStore.getMyConfig();
           this.closeModal.emit();
         },
         error: error => {
