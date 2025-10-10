@@ -17,6 +17,12 @@ export class SearchBar {
   @Column({ nullable: true })
   placeholder: string;
 
+  @Column({ default: true })
+  is_search_query_param: boolean;
+
+  @Column({ nullable: true })
+  query_param_key: string;
+
   @ManyToOne(() => UserAccount, (u) => u.search_bars, { onDelete: 'CASCADE' })
   user_account: UserAccount;
 
