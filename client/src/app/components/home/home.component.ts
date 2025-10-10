@@ -17,12 +17,16 @@ export class HomeComponent implements OnInit {
   isAuthModalOpen = false;
   authModalTab: 'login' | 'register' = 'login';
 
+  isProfileModalOpen = false;
+  profileModalTab: 'userInfo' | 'background' | 'searchBar' | 'link' = 'userInfo';
+
   ngOnInit(): void {
     this.homeStore.getMyConfig();
   }
 
-  openProfileModal(): void {
-    console.log('Open profile modal');
+  openProfileModal(tab: 'userInfo' | 'background' | 'searchBar' | 'link'): void {
+    this.isProfileModalOpen = true;
+    this.profileModalTab = tab;
   }
 
   openAuthModal(tab: 'login' | 'register'): void {
